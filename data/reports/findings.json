@@ -1,0 +1,69 @@
+[
+  {
+    "evidence": {
+      "csp": "script-src * 'unsafe-inline'; object-src 'none'"
+    },
+    "kind": "csp.default_src_missing",
+    "severity": "medium",
+    "summary": "CSP does not define default-src fallback."
+  },
+  {
+    "evidence": {
+      "csp": "script-src * 'unsafe-inline'; object-src 'none'"
+    },
+    "kind": "csp.unsafe_inline",
+    "severity": "high",
+    "summary": "CSP allows unsafe-inline scripts or styles."
+  },
+  {
+    "evidence": {
+      "csp": "script-src * 'unsafe-inline'; object-src 'none'"
+    },
+    "kind": "csp.wildcard",
+    "severity": "medium",
+    "summary": "CSP contains wildcard sources that broaden allowed content."
+  },
+  {
+    "evidence": {
+      "csp": "script-src * 'unsafe-inline'; object-src 'none'"
+    },
+    "kind": "csp.frame_ancestors_missing",
+    "severity": "medium",
+    "summary": "CSP does not define frame-ancestors for embed control."
+  },
+  {
+    "evidence": {},
+    "kind": "headers.hsts_missing",
+    "severity": "medium",
+    "summary": "Strict-Transport-Security header is missing."
+  },
+  {
+    "evidence": {},
+    "kind": "headers.content_type_options_missing",
+    "severity": "low",
+    "summary": "X-Content-Type-Options header is missing."
+  },
+  {
+    "evidence": {},
+    "kind": "iframe.clickjacking_unprotected",
+    "severity": "high",
+    "summary": "No X-Frame-Options or CSP frame-ancestors policy is present."
+  },
+  {
+    "evidence": {
+      "preview": "<html><script src=\"http://cdn.example.test/app.js\"></script></html>"
+    },
+    "kind": "content.mixed_content",
+    "severity": "medium",
+    "summary": "Page body references insecure http resources."
+  },
+  {
+    "evidence": {
+      "access_control_allow_credentials": "true",
+      "access_control_allow_origin": "*"
+    },
+    "kind": "cors.overbroad",
+    "severity": "high",
+    "summary": "CORS allows any origin with credentials enabled."
+  }
+]

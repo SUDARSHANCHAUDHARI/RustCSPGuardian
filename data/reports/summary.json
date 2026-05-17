@@ -1,0 +1,22 @@
+{
+  "by_kind": {
+    "content.mixed_content": 1,
+    "cors.overbroad": 1,
+    "csp.default_src_missing": 1,
+    "csp.frame_ancestors_missing": 1,
+    "csp.unsafe_inline": 1,
+    "csp.wildcard": 1,
+    "headers.content_type_options_missing": 1,
+    "headers.hsts_missing": 1,
+    "iframe.clickjacking_unprotected": 1
+  },
+  "by_severity": {
+    "high": 3,
+    "low": 1,
+    "medium": 5
+  },
+  "findings": 9,
+  "risk_score": 100,
+  "status": 200,
+  "url": "https://insecure.example.test"
+}
