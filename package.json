@@ -1,0 +1,11 @@
+{
+  "name": "csp-guardian",
+  "private": true,
+  "version": "0.1.0",
+  "description": "CSP Guardian scaffold",
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "seed": "bash scripts/seed-demo-data.sh",
+    "dev": "bash scripts/run-local.sh"
+  }
+}
