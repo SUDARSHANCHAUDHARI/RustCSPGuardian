@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 pub struct ScanReport {
     pub url: String,
     pub final_url: Option<String>,
+    pub scanned_at: String,
     pub frame_policy: FramePolicy,
     pub security_headers: SecurityHeaders,
     pub risk: RiskLevel,

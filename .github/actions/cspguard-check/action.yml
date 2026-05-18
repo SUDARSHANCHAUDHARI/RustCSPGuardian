@@ -1,0 +1,60 @@
+name: CSP Guardian Check
+description: Check whether a URL can be embedded in an iframe using cspguard
+
+inputs:
+  url:
+    description: URL to check
+    required: true
+  fail-on-blocked:
+    description: Fail the workflow if the URL is blocked from embedding
+    required: false
+    default: "true"
+
+outputs:
+  result:
+    description: Embed result (Allowed, Blocked, Unknown)
+    value: ${{ steps.check.outputs.result }}
+  risk:
+    description: Risk level (Low, Medium, High)
+    value: ${{ steps.check.outputs.risk }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Cache cargo
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          ${{ github.action_path }}/../../../target/
+        key: ${{ runner.os }}-cspguard-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Build cspguard
+      shell: bash
+      working-directory: ${{ github.action_path }}/../../..
+      run: cargo build --release
+
+    - name: Run cspguard check
+      id: check
+      shell: bash
+      working-directory: ${{ github.action_path }}/../../..
+      run: |
+        OUTPUT=$(./target/release/cspguard check "${{ inputs.url }}" --json 2>/dev/null)
+        RESULT=$(echo "$OUTPUT" | jq -r '.frame_policy.result')
+        RISK=$(echo "$OUTPUT" | jq -r '.risk')
+        echo "result=$RESULT" >> "$GITHUB_OUTPUT"
+        echo "risk=$RISK" >> "$GITHUB_OUTPUT"
+        echo "### CSP Guardian Result" >> "$GITHUB_STEP_SUMMARY"
+        echo "- **URL:** ${{ inputs.url }}" >> "$GITHUB_STEP_SUMMARY"
+        echo "- **Embed Result:** $RESULT" >> "$GITHUB_STEP_SUMMARY"
+        echo "- **Risk Level:** $RISK" >> "$GITHUB_STEP_SUMMARY"
+        if [[ "${{ inputs.fail-on-blocked }}" == "true" && "$RESULT" == "Blocked" ]]; then
+          echo "❌ URL is blocked from embedding." >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+        fi

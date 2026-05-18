@@ -41,6 +41,7 @@ pub async fn check_url(url: &str) -> Result<ScanReport> {
     Ok(ScanReport {
         url: url.to_string(),
         final_url: if redirected { Some(final_url) } else { None },
+        scanned_at: chrono::Local::now().to_rfc3339(),
         frame_policy,
         security_headers,
         risk,
