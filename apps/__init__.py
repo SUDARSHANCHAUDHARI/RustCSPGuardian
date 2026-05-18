@@ -1,1 +1,0 @@
-"""CSP Guardian applications."""
