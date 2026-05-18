@@ -45,6 +45,29 @@ pub fn print(report: &ScanReport) {
         report.security_headers.permissions_policy.as_deref().map(|_| "present".green()).unwrap_or("missing".red())
     );
 
+    println!("\n{}", "CORS:".bold());
+    let origin_display = report.security_headers.cors.allow_origin.as_deref().unwrap_or("not set");
+    let origin_colored = if report.security_headers.cors.is_wildcard {
+        origin_display.yellow()
+    } else if report.security_headers.cors.allow_origin.is_some() {
+        origin_display.green()
+    } else {
+        origin_display.dimmed()
+    };
+    println!("  {:<26} {}", "Access-Control-Allow-Origin:", origin_colored);
+    println!(
+        "  {:<26} {}",
+        "Allow-Methods:",
+        report.security_headers.cors.allow_methods.as_deref().unwrap_or("not set").dimmed()
+    );
+
+    println!("\n{}", "Mixed Content:".bold());
+    println!(
+        "  {:<26} {}",
+        "Risk:",
+        if report.security_headers.mixed_content_risk { "yes".red() } else { "no".green() }
+    );
+
     let risk_colored = match report.risk {
         RiskLevel::Low => report.risk.to_string().green(),
         RiskLevel::Medium => report.risk.to_string().yellow(),

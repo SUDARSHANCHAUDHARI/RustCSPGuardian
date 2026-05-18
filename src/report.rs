@@ -22,6 +22,15 @@ pub struct SecurityHeaders {
     pub csp: Option<String>,
     pub referrer_policy: Option<String>,
     pub permissions_policy: Option<String>,
+    pub cors: CorsPolicy,
+    pub mixed_content_risk: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CorsPolicy {
+    pub allow_origin: Option<String>,
+    pub allow_methods: Option<String>,
+    pub is_wildcard: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]

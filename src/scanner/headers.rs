@@ -1,5 +1,5 @@
 use reqwest::header::HeaderMap;
-use crate::report::EmbedResult;
+use crate::report::{CorsPolicy, EmbedResult};
 
 pub fn get_header(headers: &HeaderMap, name: &str) -> Option<String> {
     headers
@@ -18,6 +18,30 @@ pub fn parse_csp_frame_ancestors(csp: Option<&str>) -> Option<String> {
         .map(|d| d.trim())
         .find(|d| d.starts_with("frame-ancestors"))
         .map(|d| d.to_string())
+}
+
+pub fn evaluate_cors(headers: &HeaderMap) -> CorsPolicy {
+    let allow_origin = get_header(headers, "access-control-allow-origin");
+    let allow_methods = get_header(headers, "access-control-allow-methods");
+    let is_wildcard = allow_origin.as_deref() == Some("*");
+    CorsPolicy {
+        allow_origin,
+        allow_methods,
+        is_wildcard,
+    }
+}
+
+pub fn evaluate_mixed_content(url: &str, headers: &HeaderMap) -> bool {
+    // Mixed content risk: site served over HTTP (not HTTPS) or CSP allows http:
+    if url.starts_with("http://") {
+        return true;
+    }
+    if let Some(csp) = get_header(headers, "content-security-policy") {
+        if csp.contains("http:") && !csp.contains("https:") {
+            return true;
+        }
+    }
+    false
 }
 
 pub fn evaluate_embed(xfo: &Option<String>, frame_ancestors: &Option<String>) -> EmbedResult {

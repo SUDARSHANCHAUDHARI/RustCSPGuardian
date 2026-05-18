@@ -29,6 +29,8 @@ pub async fn check_url(url: &str) -> Result<ScanReport> {
         csp: csp.clone(),
         referrer_policy: headers::get_header(&hdrs, "referrer-policy"),
         permissions_policy: headers::get_header(&hdrs, "permissions-policy"),
+        cors: headers::evaluate_cors(&hdrs),
+        mixed_content_risk: headers::evaluate_mixed_content(url, &hdrs),
     };
 
     let risk = evaluate_risk(&frame_policy, &security_headers);
