@@ -2,17 +2,16 @@
 
 ## Current Status
 
-This repository has production foundation files and an MVP scaffold. The product implementation is not production complete yet.
+This repository has a working local MVP with deterministic analysis, safe sample data, generated reports, and tests. It is not production complete yet.
 
 ## Required Before Public Release
 
-- Implement the primary MVP workflow.
-- Add automated tests for core detection logic.
-- Validate all untrusted inputs.
+- Add URL validation and target allowlisting for hosted scanning.
+- Add request timeout, redirect, and response-size controls.
 - Add structured logging without leaking secrets.
-- Document local setup and deployment.
-- Review all sample data for sensitive content.
-- Add authentication and authorization where user data or device data is handled.
+- Redact sensitive response headers before storage.
+- Add authentication and authorization before multi-user scan history.
+- Add database-backed scan storage with retention policy.
 - Run dependency and secret scans before release.
 
 ## Definition of Done

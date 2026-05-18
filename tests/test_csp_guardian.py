@@ -24,7 +24,10 @@ class CSPGuardianTests(unittest.TestCase):
         kinds = {finding["kind"] for finding in findings}
 
         self.assertGreater(summary["risk_score"], 0)
+        self.assertEqual(summary["grade"], "F")
+        self.assertEqual(summary["iframe"]["mode"], "unprotected")
         self.assertIn("csp.unsafe_inline", kinds)
+        self.assertIn("csp.base_uri_missing", kinds)
         self.assertIn("cors.overbroad", kinds)
         self.assertIn("content.mixed_content", kinds)
 
@@ -47,10 +50,16 @@ class CSPGuardianTests(unittest.TestCase):
             )
             report = Path(tmp, "report.md").read_text(encoding="utf-8")
             findings = json.loads(Path(tmp, "findings.json").read_text(encoding="utf-8"))
+            matrix = json.loads(Path(tmp, "header-matrix.json").read_text(encoding="utf-8"))
+            remediation = json.loads(Path(tmp, "remediation-plan.json").read_text(encoding="utf-8"))
 
             self.assertIn("Risk score", result.stdout)
+            self.assertIn("Grade", result.stdout)
             self.assertIn("CSP Guardian Report", report)
+            self.assertIn("Remediation Plan", report)
             self.assertGreaterEqual(len(findings), 5)
+            self.assertGreaterEqual(matrix["failed"], 3)
+            self.assertGreaterEqual(len(remediation), 5)
 
 
 if __name__ == "__main__":

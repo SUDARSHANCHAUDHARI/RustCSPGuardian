@@ -1,0 +1,50 @@
+[
+  {
+    "action": "Remove unsafe-inline by moving inline scripts to nonced or hashed script blocks.",
+    "kind": "csp.unsafe_inline",
+    "priority": 1,
+    "severity": "high"
+  },
+  {
+    "action": "Set CSP frame-ancestors or X-Frame-Options to prevent clickjacking.",
+    "kind": "iframe.clickjacking_unprotected",
+    "priority": 2,
+    "severity": "high"
+  },
+  {
+    "action": "Restrict Access-Control-Allow-Origin to trusted origins and avoid wildcard credentials.",
+    "kind": "cors.overbroad",
+    "priority": 3,
+    "severity": "high"
+  },
+  {
+    "action": "Add default-src as the fallback directive for resource loading.",
+    "kind": "csp.default_src_missing",
+    "priority": 4,
+    "severity": "medium"
+  },
+  {
+    "action": "Replace wildcard sources with explicit trusted origins.",
+    "kind": "csp.wildcard",
+    "priority": 5,
+    "severity": "medium"
+  },
+  {
+    "action": "Add base-uri 'self' or base-uri 'none'.",
+    "kind": "csp.base_uri_missing",
+    "priority": 6,
+    "severity": "medium"
+  },
+  {
+    "action": "Add frame-ancestors to define exactly where the site may be embedded.",
+    "kind": "csp.frame_ancestors_missing",
+    "priority": 7,
+    "severity": "medium"
+  },
+  {
+    "action": "Add Strict-Transport-Security after confirming HTTPS is stable.",
+    "kind": "headers.hsts_missing",
+    "priority": 8,
+    "severity": "medium"
+  }
+]

@@ -1,1 +1,6 @@
-# TODO: add API Dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+COPY . .
+
+CMD ["python", "-m", "apps.api.app.cli", "--fixture", "data/samples/insecure-site-headers.json", "--out-dir", "data/reports"]

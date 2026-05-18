@@ -26,6 +26,15 @@ def analyze_csp(headers: dict[str, str]) -> list[dict]:
                 "evidence": {"csp": csp},
             }
         )
+    if "script-src" not in lowered:
+        findings.append(
+            {
+                "kind": "csp.script_src_missing",
+                "severity": "medium",
+                "summary": "CSP does not define script-src for JavaScript execution control.",
+                "evidence": {"csp": csp},
+            }
+        )
     if "'unsafe-inline'" in lowered:
         findings.append(
             {
@@ -41,6 +50,33 @@ def analyze_csp(headers: dict[str, str]) -> list[dict]:
                 "kind": "csp.wildcard",
                 "severity": "medium",
                 "summary": "CSP contains wildcard sources that broaden allowed content.",
+                "evidence": {"csp": csp},
+            }
+        )
+    if "base-uri" not in lowered:
+        findings.append(
+            {
+                "kind": "csp.base_uri_missing",
+                "severity": "medium",
+                "summary": "CSP does not define base-uri to restrict base tag injection.",
+                "evidence": {"csp": csp},
+            }
+        )
+    if "form-action" not in lowered:
+        findings.append(
+            {
+                "kind": "csp.form_action_missing",
+                "severity": "low",
+                "summary": "CSP does not define form-action to restrict form submission targets.",
+                "evidence": {"csp": csp},
+            }
+        )
+    if "upgrade-insecure-requests" not in lowered:
+        findings.append(
+            {
+                "kind": "csp.upgrade_insecure_requests_missing",
+                "severity": "low",
+                "summary": "CSP does not request automatic upgrade of insecure subresources.",
                 "evidence": {"csp": csp},
             }
         )

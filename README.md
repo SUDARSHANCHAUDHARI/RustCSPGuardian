@@ -64,12 +64,30 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 - Checks HSTS and content-type hardening headers.
 - Detects simple mixed-content references.
 - Explains risky CORS combinations.
-- Writes JSON scan data, JSON findings, JSON summary, and a Markdown report.
+- Grades the scanned site with a risk score and letter grade.
+- Builds iframe compatibility posture for embed/clickjacking review.
+- Writes JSON scan data, findings, summary, header matrix, remediation plan, and a Markdown report.
+
+## Demo Artifacts
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Security notes](docs/SECURITY_NOTES.md)
+- [Demo walkthrough](docs/DEMO.md)
+- [Release notes](docs/RELEASE_NOTES.md)
+- [Sample report](data/reports/report.md)
+- [Sample remediation plan](data/reports/remediation-plan.json)
+- [Sample header matrix](data/reports/header-matrix.json)
+
+## Docker Demo
+
+```bash
+docker compose run --rm cspguardian-demo
+```
 
 ## Roadmap
 
-- Polish sample output screenshots or terminal demos
-- Add architecture diagram and deeper implementation notes
-- Expand test coverage around edge cases
-- Add Docker or local demo workflow where useful
-- Prepare `v0.1.0-mvp` release notes
+- Add FastAPI scan endpoint and React dashboard.
+- Add side-by-side before/after policy comparison.
+- Add CSP directive parser with source-level scoring.
+- Add exportable HTML/PDF report.
+- Prepare GitHub release `v0.1.0-mvp`.

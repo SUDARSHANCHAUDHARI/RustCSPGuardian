@@ -1,0 +1,31 @@
+{
+  "checks": [
+    {
+      "name": "content-security-policy",
+      "status": "pass"
+    },
+    {
+      "name": "strict-transport-security",
+      "status": "fail"
+    },
+    {
+      "name": "x-content-type-options",
+      "status": "fail"
+    },
+    {
+      "name": "frame-ancestors-or-x-frame-options",
+      "status": "fail"
+    },
+    {
+      "name": "cors",
+      "status": "fail"
+    },
+    {
+      "name": "mixed-content",
+      "status": "fail"
+    }
+  ],
+  "failed": 5,
+  "passed": 1,
+  "url": "https://insecure.example.test"
+}

@@ -27,6 +27,30 @@
     "evidence": {
       "csp": "script-src * 'unsafe-inline'; object-src 'none'"
     },
+    "kind": "csp.base_uri_missing",
+    "severity": "medium",
+    "summary": "CSP does not define base-uri to restrict base tag injection."
+  },
+  {
+    "evidence": {
+      "csp": "script-src * 'unsafe-inline'; object-src 'none'"
+    },
+    "kind": "csp.form_action_missing",
+    "severity": "low",
+    "summary": "CSP does not define form-action to restrict form submission targets."
+  },
+  {
+    "evidence": {
+      "csp": "script-src * 'unsafe-inline'; object-src 'none'"
+    },
+    "kind": "csp.upgrade_insecure_requests_missing",
+    "severity": "low",
+    "summary": "CSP does not request automatic upgrade of insecure subresources."
+  },
+  {
+    "evidence": {
+      "csp": "script-src * 'unsafe-inline'; object-src 'none'"
+    },
     "kind": "csp.frame_ancestors_missing",
     "severity": "medium",
     "summary": "CSP does not define frame-ancestors for embed control."

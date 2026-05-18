@@ -1,0 +1,9 @@
+.git
+__pycache__/
+*.pyc
+.venv/
+data/reports/*.json
+data/reports/*.md
+.env
+.env.*
+!.env.example
