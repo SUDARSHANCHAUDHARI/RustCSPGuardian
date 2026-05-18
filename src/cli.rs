@@ -23,6 +23,9 @@ pub enum Commands {
         /// Export HTML report to file
         #[arg(long)]
         html: Option<String>,
+        /// Save result to scan history
+        #[arg(long)]
+        save: bool,
     },
     /// Check multiple URLs from a file (one per line)
     Batch {
@@ -34,5 +37,17 @@ pub enum Commands {
         /// Export HTML report to file
         #[arg(long)]
         html: Option<String>,
+        /// Save results to scan history
+        #[arg(long)]
+        save: bool,
+    },
+    /// View scan history
+    History {
+        /// Show last N scans (default: 10)
+        #[arg(long, default_value = "10")]
+        last: usize,
+        /// Output as JSON
+        #[arg(long)]
+        json: bool,
     },
 }
