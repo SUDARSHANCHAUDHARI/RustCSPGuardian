@@ -92,9 +92,7 @@ async fn test_no_headers_is_unknown() {
 async fn test_wildcard_cors_detected() {
     let server = MockServer::start().await;
     Mock::given(method("GET"))
-        .respond_with(
-            ResponseTemplate::new(200).insert_header("access-control-allow-origin", "*"),
-        )
+        .respond_with(ResponseTemplate::new(200).insert_header("access-control-allow-origin", "*"))
         .mount(&server)
         .await;
 

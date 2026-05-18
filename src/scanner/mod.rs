@@ -1,7 +1,7 @@
 mod headers;
 
-use anyhow::Result;
 use crate::report::{EmbedResult, FramePolicy, RiskLevel, ScanReport, SecurityHeaders};
+use anyhow::Result;
 
 pub async fn check_url(url: &str) -> Result<ScanReport> {
     let client = reqwest::Client::builder()
@@ -78,7 +78,8 @@ fn build_suggestion(frame: &FramePolicy) -> String {
                 )
             } else {
                 "CSP frame-ancestors blocks iframe embedding. \
-                Contact the site owner to allow your domain.".to_string()
+                Contact the site owner to allow your domain."
+                    .to_string()
             }
         }
         EmbedResult::Allowed => {

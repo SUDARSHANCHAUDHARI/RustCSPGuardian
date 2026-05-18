@@ -2,11 +2,11 @@ mod cli;
 mod error;
 mod output;
 
-use cspguard::report;
-use cspguard::scanner;
 use anyhow::Result;
 use clap::Parser;
 use cli::{Cli, Commands};
+use cspguard::report;
+use cspguard::scanner;
 use tracing_subscriber::EnvFilter;
 
 #[tokio::main]
