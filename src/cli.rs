@@ -20,6 +20,9 @@ pub enum Commands {
         /// Output as JSON
         #[arg(long)]
         json: bool,
+        /// Export HTML report to file
+        #[arg(long)]
+        html: Option<String>,
     },
     /// Check multiple URLs from a file (one per line)
     Batch {
@@ -28,5 +31,8 @@ pub enum Commands {
         /// Output as JSON
         #[arg(long)]
         json: bool,
+        /// Export HTML report to file
+        #[arg(long)]
+        html: Option<String>,
     },
 }
