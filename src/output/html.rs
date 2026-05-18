@@ -1,9 +1,13 @@
+use crate::report::{EmbedResult, RiskLevel, ScanReport};
 use anyhow::Result;
 use std::fs;
-use crate::report::{EmbedResult, RiskLevel, ScanReport};
 
 pub fn export(reports: &[ScanReport], path: &str) -> Result<()> {
-    let body = reports.iter().map(render_report).collect::<Vec<_>>().join("\n");
+    let body = reports
+        .iter()
+        .map(render_report)
+        .collect::<Vec<_>>()
+        .join("\n");
     let html = page(&body);
     fs::write(path, html)?;
     println!("HTML report saved to: {}", path);
@@ -12,18 +16,19 @@ pub fn export(reports: &[ScanReport], path: &str) -> Result<()> {
 
 fn render_report(r: &ScanReport) -> String {
     let embed_badge = match r.frame_policy.result {
-        EmbedResult::Allowed  => badge("Allowed", "#22c55e"),
-        EmbedResult::Blocked  => badge("Blocked", "#ef4444"),
-        EmbedResult::Unknown  => badge("Unknown", "#f59e0b"),
+        EmbedResult::Allowed => badge("Allowed", "#22c55e"),
+        EmbedResult::Blocked => badge("Blocked", "#ef4444"),
+        EmbedResult::Unknown => badge("Unknown", "#f59e0b"),
     };
 
     let risk_color = match r.risk {
-        RiskLevel::Low    => "#22c55e",
+        RiskLevel::Low => "#22c55e",
         RiskLevel::Medium => "#f59e0b",
-        RiskLevel::High   => "#ef4444",
+        RiskLevel::High => "#ef4444",
     };
 
-    format!(r#"
+    format!(
+        r#"
 <div class="card">
   <div class="card-header">
     <span class="url">{url}</span>
@@ -72,15 +77,37 @@ fn render_report(r: &ScanReport) -> String {
 "#,
         url = r.url,
         embed_badge = embed_badge,
-        csp_fa = r.frame_policy.csp_frame_ancestors.as_deref().unwrap_or("missing"),
-        xfo = r.frame_policy.x_frame_options.as_deref().unwrap_or("missing"),
+        csp_fa = r
+            .frame_policy
+            .csp_frame_ancestors
+            .as_deref()
+            .unwrap_or("missing"),
+        xfo = r
+            .frame_policy
+            .x_frame_options
+            .as_deref()
+            .unwrap_or("missing"),
         hsts = present(r.security_headers.hsts),
         csp = option_present(r.security_headers.csp.as_deref()),
         rp = option_present(r.security_headers.referrer_policy.as_deref()),
         pp = option_present(r.security_headers.permissions_policy.as_deref()),
-        cors_origin = r.security_headers.cors.allow_origin.as_deref().unwrap_or("not set"),
-        cors_methods = r.security_headers.cors.allow_methods.as_deref().unwrap_or("not set"),
-        mixed = if r.security_headers.mixed_content_risk { "⚠ Yes" } else { "No" },
+        cors_origin = r
+            .security_headers
+            .cors
+            .allow_origin
+            .as_deref()
+            .unwrap_or("not set"),
+        cors_methods = r
+            .security_headers
+            .cors
+            .allow_methods
+            .as_deref()
+            .unwrap_or("not set"),
+        mixed = if r.security_headers.mixed_content_risk {
+            "⚠ Yes"
+        } else {
+            "No"
+        },
         risk_color = risk_color,
         risk = r.risk,
         suggestion = r.suggestion,
@@ -88,19 +115,31 @@ fn render_report(r: &ScanReport) -> String {
 }
 
 fn badge(label: &str, color: &str) -> String {
-    format!(r#"<span class="badge" style="background:{}">{}</span>"#, color, label)
+    format!(
+        r#"<span class="badge" style="background:{}">{}</span>"#,
+        color, label
+    )
 }
 
 fn present(v: bool) -> &'static str {
-    if v { "✅ present" } else { "❌ missing" }
+    if v {
+        "✅ present"
+    } else {
+        "❌ missing"
+    }
 }
 
 fn option_present(v: Option<&str>) -> &'static str {
-    if v.is_some() { "✅ present" } else { "❌ missing" }
+    if v.is_some() {
+        "✅ present"
+    } else {
+        "❌ missing"
+    }
 }
 
 fn page(body: &str) -> String {
-    format!(r#"<!DOCTYPE html>
+    format!(
+        r#"<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">

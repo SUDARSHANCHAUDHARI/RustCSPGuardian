@@ -1,5 +1,5 @@
-use reqwest::header::HeaderMap;
 use crate::report::{CorsPolicy, EmbedResult};
+use reqwest::header::HeaderMap;
 
 pub fn get_header(headers: &HeaderMap, name: &str) -> Option<String> {
     headers
