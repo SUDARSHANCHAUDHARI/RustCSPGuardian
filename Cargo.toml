@@ -6,6 +6,10 @@ authors = ["Sudarshan Chaudhari <sunny.sudarshan@gmail.com>"]
 description = "Check whether a website can be embedded in iframe-based digital signage environments"
 license = "MIT"
 
+[lib]
+name = "cspguard"
+path = "src/lib.rs"
+
 [[bin]]
 name = "cspguard"
 path = "src/main.rs"

@@ -4,6 +4,9 @@ use crate::report::{EmbedResult, RiskLevel, ScanReport};
 pub fn print(report: &ScanReport) {
     println!("\n{}", "CSP Guardian Report".bold().underline());
     println!("{} {}", "URL:".bold(), report.url);
+    if let Some(final_url) = &report.final_url {
+        println!("{} {}", "Redirected to:".bold(), final_url.dimmed());
+    }
 
     println!("\n{}", "Frame Policy:".bold());
     println!(

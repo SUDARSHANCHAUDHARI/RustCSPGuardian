@@ -7,15 +7,17 @@ pub async fn check_url(url: &str) -> Result<ScanReport> {
     let client = reqwest::Client::builder()
         .user_agent("cspguard/0.1.0")
         .timeout(std::time::Duration::from_secs(10))
+        .redirect(reqwest::redirect::Policy::limited(10))
         .build()?;
 
     let response = client.get(url).send().await?;
+    let final_url = response.url().to_string();
+    let redirected = final_url != url;
     let hdrs = response.headers().clone();
 
     let csp = headers::get_header(&hdrs, "content-security-policy");
     let xfo = headers::get_header(&hdrs, "x-frame-options");
     let csp_frame_ancestors = headers::parse_csp_frame_ancestors(csp.as_deref());
-
     let embed_result = headers::evaluate_embed(&xfo, &csp_frame_ancestors);
 
     let frame_policy = FramePolicy {
@@ -30,7 +32,7 @@ pub async fn check_url(url: &str) -> Result<ScanReport> {
         referrer_policy: headers::get_header(&hdrs, "referrer-policy"),
         permissions_policy: headers::get_header(&hdrs, "permissions-policy"),
         cors: headers::evaluate_cors(&hdrs),
-        mixed_content_risk: headers::evaluate_mixed_content(url, &hdrs),
+        mixed_content_risk: headers::evaluate_mixed_content(&final_url, &hdrs),
     };
 
     let risk = evaluate_risk(&frame_policy, &security_headers);
@@ -38,6 +40,7 @@ pub async fn check_url(url: &str) -> Result<ScanReport> {
 
     Ok(ScanReport {
         url: url.to_string(),
+        final_url: if redirected { Some(final_url) } else { None },
         frame_policy,
         security_headers,
         risk,
@@ -59,8 +62,7 @@ fn evaluate_risk(frame: &FramePolicy, sec: &SecurityHeaders) -> RiskLevel {
     .count();
 
     match missing {
-        0 => RiskLevel::Low,
-        1 => RiskLevel::Low,
+        0 | 1 => RiskLevel::Low,
         _ => RiskLevel::Medium,
     }
 }
@@ -70,18 +72,20 @@ fn build_suggestion(frame: &FramePolicy) -> String {
         EmbedResult::Blocked => {
             if let Some(xfo) = &frame.x_frame_options {
                 format!(
-                    "X-Frame-Options is {} — this site will block iframe embedding in ScreenCloud.",
+                    "X-Frame-Options is {} — this site blocks iframe embedding. \
+                    Ask the site owner to allow your domain via CSP frame-ancestors.",
                     xfo
                 )
             } else {
-                "CSP frame-ancestors blocks iframe embedding. Contact the site owner to allow your domain.".to_string()
+                "CSP frame-ancestors blocks iframe embedding. \
+                Contact the site owner to allow your domain.".to_string()
             }
         }
         EmbedResult::Allowed => {
-            "This site allows iframe embedding. Should work in ScreenCloud.".to_string()
+            "No iframe blocking policy detected. Site should be embeddable.".to_string()
         }
         EmbedResult::Unknown => {
-            "No frame policy detected. Embedding may work but is not guaranteed.".to_string()
+            "No frame policy detected. Embedding may work but cannot be guaranteed.".to_string()
         }
     }
 }
