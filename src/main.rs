@@ -1,9 +1,9 @@
 mod cli;
 mod error;
 mod output;
-mod report;
-mod scanner;
 
+use cspguard::report;
+use cspguard::scanner;
 use anyhow::Result;
 use clap::Parser;
 use cli::{Cli, Commands};
