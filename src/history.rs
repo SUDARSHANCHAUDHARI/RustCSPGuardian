@@ -27,7 +27,7 @@ pub fn load(last: usize) -> Result<Vec<ScanReport>> {
     let file = fs::File::open(&path)?;
     let lines: Vec<String> = BufReader::new(file)
         .lines()
-        .filter_map(|l| l.ok())
+        .map_while(Result::ok)
         .filter(|l| !l.trim().is_empty())
         .collect();
 
