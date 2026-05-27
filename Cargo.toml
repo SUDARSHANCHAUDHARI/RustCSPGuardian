@@ -7,6 +7,8 @@ description = "Check whether a website can be embedded in iframe-based digital s
 license = "MIT"
 repository = "https://github.com/SUDARSHANCHAUDHARI/RustCSPGuardian"
 readme = "README.md"
+keywords = ["csp", "iframe", "headers", "security", "cli"]
+categories = ["command-line-utilities", "web-programming"]
 
 [lib]
 name = "cspguard"
