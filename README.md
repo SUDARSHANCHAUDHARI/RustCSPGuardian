@@ -1,12 +1,48 @@
 # RustCSPGuardian
 
-Rust CLI that checks whether a website can be embedded in an iframe. Detects CSP `frame-ancestors`, `X-Frame-Options`, CORS issues, missing security headers, and mixed content risk.
+[![CI](https://github.com/SUDARSHANCHAUDHARI/RustCSPGuardian/actions/workflows/ci.yml/badge.svg)](https://github.com/SUDARSHANCHAUDHARI/RustCSPGuardian/actions/workflows/ci.yml)
+![Rust](https://img.shields.io/badge/Rust-1.75%2B-orange?logo=rust)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-## Install
+RustCSPGuardian is a Rust CLI for checking whether a website can be embedded inside iframe-based environments such as dashboards, kiosk shells, portals, and digital signage players. It inspects frame-blocking headers, CORS signals, redirect behavior, security headers, and mixed-content risk, then reports a clear `Allowed`, `Blocked`, or `Unknown` verdict.
+
+## Why This Exists
+
+Iframe compatibility issues usually show up late: a URL works in a browser tab, but fails when embedded in a signage CMS, admin portal, or web view. RustCSPGuardian gives you a repeatable preflight check so you can validate URLs before adding them to a playlist, dashboard, or customer-facing embed flow.
+
+## Features
+
+- Single URL scan with terminal, JSON, or HTML output.
+- Batch scan from a newline-delimited URL file.
+- Detects `Content-Security-Policy: frame-ancestors` rules.
+- Detects `X-Frame-Options: DENY` and `SAMEORIGIN`.
+- Reports missing or present `Strict-Transport-Security`, `Referrer-Policy`, and `Permissions-Policy`.
+- Detects wildcard `Access-Control-Allow-Origin`.
+- Flags mixed-content risk when HTTPS pages reference HTTP resources.
+- Follows redirects and reports the final URL.
+- Machine-readable JSON for CI or automation.
+- HTML report output for sharing with QA, support, or customers.
+
+## Installation
+
+### From Source
 
 ```bash
+git clone https://github.com/SUDARSHANCHAUDHARI/RustCSPGuardian.git
+cd RustCSPGuardian
 cargo build --release
-# binary at target/release/cspguard
+```
+
+The binary is created at:
+
+```bash
+target/release/cspguard
+```
+
+Optional local install:
+
+```bash
+cargo install --path .
 ```
 
 ## Usage
@@ -18,53 +54,88 @@ cspguard check https://example.com
 # JSON output
 cspguard check https://example.com --json
 
-# HTML report
+# HTML output
 cspguard check https://example.com --html report.html
 
-# Batch check from file (one URL per line)
+# Batch check from a file with one URL per line
 cspguard batch urls.txt
 cspguard batch urls.txt --json
 cspguard batch urls.txt --html report.html
+
+# Control redirect depth
+cspguard check https://example.com --max-redirects 5
 ```
 
-## What it checks
+## What It Checks
 
-| Header | Detection |
+| Area | What RustCSPGuardian Looks For |
 |---|---|
-| `Content-Security-Policy: frame-ancestors` | `none` / `self` / wildcard |
-| `X-Frame-Options` | `DENY` / `SAMEORIGIN` |
-| `Strict-Transport-Security` | present / missing |
-| `Referrer-Policy` | present / missing |
-| `Permissions-Policy` | present / missing |
-| `Access-Control-Allow-Origin` | wildcard detection |
-| Mixed content | HTTP resource on HTTPS page |
+| CSP frame policy | `frame-ancestors 'none'`, `'self'`, wildcard, or missing policy |
+| X-Frame-Options | `DENY`, `SAMEORIGIN`, or missing header |
+| Redirects | Final URL and whether the domain changed |
+| CORS | Wildcard `Access-Control-Allow-Origin` |
+| Security headers | HSTS, Referrer Policy, Permissions Policy |
+| Mixed content | HTTP resources referenced from HTTPS pages |
 
-## Output
+## Verdicts
 
-**Terminal** — coloured report with risk level and suggestion  
-**JSON** — machine-readable, pipe-friendly  
-**HTML** — dark-theme report card, supports batch
-
-## Embed result
-
-| Result | Meaning |
+| Verdict | Meaning |
 |---|---|
-| `Allowed` | No blocking headers found |
-| `Blocked` | XFO DENY/SAMEORIGIN or CSP frame-ancestors none |
-| `Unknown` | No headers present — behaviour is browser-dependent |
+| `Allowed` | No frame-blocking headers were found. |
+| `Blocked` | CSP or X-Frame-Options blocks embedding. |
+| `Unknown` | Headers are missing or inconclusive; browser/runtime behavior may vary. |
 
-## Redirect following
+## Output Formats
 
-Follows up to 10 redirects. Reports the final URL if the domain changed.
+Terminal output is designed for quick manual checks. JSON output is stable enough for scripts and CI gates. HTML output is useful when you need to share a readable report with non-engineering stakeholders.
 
-## Test
+## Example Batch File
+
+```txt
+https://example.com
+https://dashboard.example.org
+https://status.example.net
+```
+
+Run:
 
 ```bash
-cargo test
+cspguard batch urls.txt --html embed-report.html
 ```
 
-8 integration tests — XFO, CSP, CORS, redirect, CLI.
+## Development
 
-## Stack
+```bash
+cargo fmt --check
+cargo clippy -- -D warnings
+cargo test
+cargo build --release
+```
 
-Rust · clap · tokio · reqwest (rustls-tls) · serde · colored · wiremock
+The CI workflow runs the same release gates on every push and pull request to `main`.
+
+## Project Structure
+
+```text
+src/
+  cli.rs          Command-line interface
+  checker.rs      HTTP fetch and header inspection
+  report.rs       Verdict and report models
+  output/         Terminal, JSON, and HTML rendering
+tests/
+  integration_test.rs
+```
+
+## Release Status
+
+Current production release: `v1.0.0`
+
+The `v1.0.0` release was verified with formatting, clippy, tests, optimized release build, and `cargo package`.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
+
+## Developer
+
+Built by [Sudarshan Chaudhari](https://github.com/SUDARSHANCHAUDHARI) under SudarshanTechLabs.
