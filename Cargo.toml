@@ -1,10 +1,12 @@
 [package]
 name = "cspguard"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 authors = ["Sudarshan Chaudhari <sunny.sudarshan@gmail.com>"]
 description = "Check whether a website can be embedded in iframe-based digital signage environments"
 license = "MIT"
+repository = "https://github.com/SUDARSHANCHAUDHARI/RustCSPGuardian"
+readme = "README.md"
 
 [lib]
 name = "cspguard"
