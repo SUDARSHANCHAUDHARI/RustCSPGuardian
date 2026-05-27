@@ -65,6 +65,38 @@ cspguard batch urls.txt --html report.html
 cspguard check https://example.com --max-redirects 5
 ```
 
+## Included Example
+
+This repository includes a small URL list for quick batch experiments:
+
+```bash
+cat examples/urls.txt
+```
+
+```txt
+https://example.com
+https://www.rust-lang.org
+https://github.com
+```
+
+Real CLI help output:
+
+```text
+Check whether a website can be embedded in iframe-based digital signage environments
+
+Usage: cspguard <COMMAND>
+
+Commands:
+  check    Check a single URL
+  batch    Check multiple URLs from a file (one per line)
+  history  View scan history
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+```
+
 ## What It Checks
 
 | Area | What RustCSPGuardian Looks For |
