@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 - 2026-05-28
 
 - Added structured `remediation_hints` for common iframe blocking and missing security-header cases.
 
