@@ -4,9 +4,12 @@ This is a solo-maintained roadmap. Items are practical possibilities, not promis
 
 ## Planned
 
-- Add clearer remediation hints for common CSP and X-Frame-Options failures.
 - Add batch summary totals for blocked, warning, and unknown URLs.
 - Add an option to save HTML reports to a chosen path.
+
+## Completed
+
+- Added structured remediation hints for common CSP and X-Frame-Options failures.
 
 ## Maybe Later
 

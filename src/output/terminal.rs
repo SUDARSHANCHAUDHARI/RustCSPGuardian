@@ -126,5 +126,11 @@ pub fn print(report: &ScanReport) {
     println!("\n{} {}", "Risk:".bold(), risk_colored);
     println!("\n{}", "Suggestion:".bold());
     println!("  {}", report.suggestion);
+    if !report.remediation_hints.is_empty() {
+        println!("\n{}", "Remediation Hints:".bold());
+        for hint in &report.remediation_hints {
+            println!("  - {}", hint);
+        }
+    }
     println!();
 }

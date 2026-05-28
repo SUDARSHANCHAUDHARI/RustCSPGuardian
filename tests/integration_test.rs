@@ -50,6 +50,25 @@ async fn test_xfo_deny_is_blocked() {
 }
 
 #[tokio::test]
+async fn test_xfo_deny_includes_remediation_hints() {
+    let server = MockServer::start().await;
+    Mock::given(method("GET"))
+        .respond_with(ResponseTemplate::new(200).insert_header("x-frame-options", "DENY"))
+        .mount(&server)
+        .await;
+
+    let result = check_url(&server.uri()).await.unwrap();
+    assert!(result
+        .remediation_hints
+        .iter()
+        .any(|hint| hint.contains("Remove X-Frame-Options: DENY")));
+    assert!(result
+        .remediation_hints
+        .iter()
+        .any(|hint| hint.contains("Content-Security-Policy")));
+}
+
+#[tokio::test]
 async fn test_xfo_sameorigin_is_blocked() {
     let server = MockServer::start().await;
     Mock::given(method("GET"))

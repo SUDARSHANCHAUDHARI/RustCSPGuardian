@@ -120,6 +120,8 @@ Options:
 
 Terminal output is designed for quick manual checks. JSON output is stable enough for scripts and CI gates. HTML output is useful when you need to share a readable report with non-engineering stakeholders.
 
+Reports include `remediation_hints` with practical next steps for common blockers, such as removing `X-Frame-Options: DENY` when embedding is intentional or adding a specific `Content-Security-Policy: frame-ancestors` allowlist.
+
 ## Example Batch File
 
 ```txt

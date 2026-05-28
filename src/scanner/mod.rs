@@ -37,6 +37,7 @@ pub async fn check_url(url: &str) -> Result<ScanReport> {
 
     let risk = evaluate_risk(&frame_policy, &security_headers);
     let suggestion = build_suggestion(&frame_policy);
+    let remediation_hints = build_remediation_hints(&frame_policy, &security_headers);
 
     Ok(ScanReport {
         url: url.to_string(),
@@ -46,6 +47,7 @@ pub async fn check_url(url: &str) -> Result<ScanReport> {
         security_headers,
         risk,
         suggestion,
+        remediation_hints,
     })
 }
 
@@ -90,4 +92,62 @@ fn build_suggestion(frame: &FramePolicy) -> String {
             "No frame policy detected. Embedding may work but cannot be guaranteed.".to_string()
         }
     }
+}
+
+fn build_remediation_hints(frame: &FramePolicy, sec: &SecurityHeaders) -> Vec<String> {
+    let mut hints = Vec::new();
+
+    if let Some(xfo) = &frame.x_frame_options {
+        let normalized = xfo.trim().to_ascii_uppercase();
+        if normalized == "DENY" {
+            hints.push(
+                "Remove X-Frame-Options: DENY if iframe embedding is intentional.".to_string(),
+            );
+            hints.push(
+                "Use Content-Security-Policy frame-ancestors to allow only trusted embedding origins."
+                    .to_string(),
+            );
+        } else if normalized == "SAMEORIGIN" {
+            hints.push(
+                "Replace X-Frame-Options: SAMEORIGIN with CSP frame-ancestors when trusted external domains need to embed this page."
+                    .to_string(),
+            );
+        } else {
+            hints.push(format!(
+                "Review X-Frame-Options: {xfo}; modern embed allowlists should use CSP frame-ancestors."
+            ));
+        }
+    }
+
+    if let Some(ancestors) = &frame.csp_frame_ancestors {
+        let normalized = ancestors.to_ascii_lowercase();
+        if normalized.contains("'none'") {
+            hints.push(
+                "Change Content-Security-Policy frame-ancestors from 'none' to the trusted embedding origin."
+                    .to_string(),
+            );
+        } else if normalized.contains("'self'") {
+            hints.push(
+                "Add the trusted embedding origin to Content-Security-Policy frame-ancestors instead of only 'self'."
+                    .to_string(),
+            );
+        }
+    } else if frame.x_frame_options.is_none() {
+        hints.push(
+            "Add an explicit Content-Security-Policy frame-ancestors directive so embed behavior is predictable."
+                .to_string(),
+        );
+    }
+
+    if !sec.hsts {
+        hints.push("Add Strict-Transport-Security for HTTPS-only deployments.".to_string());
+    }
+    if sec.referrer_policy.is_none() {
+        hints.push("Add Referrer-Policy to reduce accidental URL data leakage.".to_string());
+    }
+    if sec.permissions_policy.is_none() {
+        hints.push("Add Permissions-Policy to make browser feature access explicit.".to_string());
+    }
+
+    hints
 }

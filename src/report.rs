@@ -9,6 +9,7 @@ pub struct ScanReport {
     pub security_headers: SecurityHeaders,
     pub risk: RiskLevel,
     pub suggestion: String,
+    pub remediation_hints: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
