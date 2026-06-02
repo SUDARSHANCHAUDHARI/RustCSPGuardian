@@ -64,3 +64,84 @@ pub fn evaluate_embed(xfo: &Option<String>, frame_ancestors: &Option<String>) ->
 
     EmbedResult::Unknown
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
+
+    fn headers_from(pairs: &[(&str, &str)]) -> HeaderMap {
+        let mut map = HeaderMap::new();
+        for (k, v) in pairs {
+            map.insert(
+                HeaderName::from_bytes(k.as_bytes()).unwrap(),
+                HeaderValue::from_str(v).unwrap(),
+            );
+        }
+        map
+    }
+
+    #[test]
+    fn parse_csp_frame_ancestors_extracts_directive() {
+        let csp = "default-src 'self'; frame-ancestors 'none'; img-src *";
+        assert_eq!(
+            parse_csp_frame_ancestors(Some(csp)),
+            Some("frame-ancestors 'none'".to_string())
+        );
+    }
+
+    #[test]
+    fn parse_csp_frame_ancestors_returns_none_when_missing() {
+        assert!(parse_csp_frame_ancestors(Some("default-src 'self'")).is_none());
+        assert!(parse_csp_frame_ancestors(None).is_none());
+    }
+
+    #[test]
+    fn evaluate_embed_blocked_by_xfo_deny() {
+        let headers = headers_from(&[("x-frame-options", "DENY")]);
+        assert!(matches!(
+            evaluate_embed(&get_header(&headers, "x-frame-options"), &None),
+            EmbedResult::Blocked
+        ));
+    }
+
+    #[test]
+    fn evaluate_embed_blocked_by_frame_ancestors_none() {
+        assert!(matches!(
+            evaluate_embed(&None, &Some("frame-ancestors 'none'".to_string())),
+            EmbedResult::Blocked
+        ));
+    }
+
+    #[test]
+    fn evaluate_embed_allowed_by_frame_ancestors_wildcard() {
+        assert!(matches!(
+            evaluate_embed(&None, &Some("frame-ancestors *".to_string())),
+            EmbedResult::Allowed
+        ));
+    }
+
+    #[test]
+    fn evaluate_embed_unknown_when_no_headers() {
+        assert!(matches!(evaluate_embed(&None, &None), EmbedResult::Unknown));
+    }
+
+    #[test]
+    fn evaluate_cors_wildcard_detected() {
+        let headers = headers_from(&[("access-control-allow-origin", "*")]);
+        let cors = evaluate_cors(&headers);
+        assert!(cors.is_wildcard);
+    }
+
+    #[test]
+    fn evaluate_mixed_content_http_url_is_risky() {
+        let headers = HeaderMap::new();
+        assert!(evaluate_mixed_content("http://example.com", &headers));
+    }
+
+    #[test]
+    fn evaluate_mixed_content_https_url_is_safe() {
+        let headers = HeaderMap::new();
+        assert!(!evaluate_mixed_content("https://example.com", &headers));
+    }
+}
