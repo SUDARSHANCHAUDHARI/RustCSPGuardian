@@ -7,7 +7,7 @@ use wiremock::{Mock, MockServer, ResponseTemplate};
 
 #[test]
 fn test_help() {
-    Command::cargo_bin("cspguard")
+    Command::cargo_bin("cspguardian")
         .unwrap()
         .arg("--help")
         .assert()
@@ -17,7 +17,7 @@ fn test_help() {
 
 #[test]
 fn test_check_subcommand_help() {
-    Command::cargo_bin("cspguard")
+    Command::cargo_bin("cspguardian")
         .unwrap()
         .args(["check", "--help"])
         .assert()
@@ -27,7 +27,7 @@ fn test_check_subcommand_help() {
 
 #[test]
 fn test_batch_subcommand_help() {
-    Command::cargo_bin("cspguard")
+    Command::cargo_bin("cspguardian")
         .unwrap()
         .args(["batch", "--help"])
         .assert()

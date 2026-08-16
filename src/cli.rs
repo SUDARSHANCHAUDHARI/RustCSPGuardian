@@ -2,7 +2,7 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(
-    name = "cspguard",
+    name = "cspguardian",
     about = "Check whether a website can be embedded in iframe-based digital signage environments",
     version
 )]
