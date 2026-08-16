@@ -35,7 +35,7 @@ cargo build --release
 The binary is created at:
 
 ```bash
-target/release/cspguard
+target/release/cspguardian
 ```
 
 Optional local install:
@@ -48,21 +48,21 @@ cargo install --path .
 
 ```bash
 # Check a single URL
-cspguard check https://example.com
+cspguardian check https://example.com
 
 # JSON output
-cspguard check https://example.com --json
+cspguardian check https://example.com --json
 
 # HTML output
-cspguard check https://example.com --html report.html
+cspguardian check https://example.com --html report.html
 
 # Batch check from a file with one URL per line
-cspguard batch urls.txt
-cspguard batch urls.txt --json
-cspguard batch urls.txt --html report.html
+cspguardian batch urls.txt
+cspguardian batch urls.txt --json
+cspguardian batch urls.txt --html report.html
 
 # Control redirect depth
-cspguard check https://example.com --max-redirects 5
+cspguardian check https://example.com --max-redirects 5
 ```
 
 ## Included Example
@@ -84,7 +84,7 @@ Real CLI help output:
 ```text
 Check whether a website can be embedded in iframe-based digital signage environments
 
-Usage: cspguard <COMMAND>
+Usage: cspguardian <COMMAND>
 
 Commands:
   check    Check a single URL
@@ -133,7 +133,7 @@ https://status.example.net
 Run:
 
 ```bash
-cspguard batch urls.txt --html embed-report.html
+cspguardian batch urls.txt --html embed-report.html
 ```
 
 ## Development
