@@ -45,7 +45,7 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}/../../..
       run: |
-        OUTPUT=$(./target/release/cspguard check "${{ inputs.url }}" --json 2>/dev/null)
+        OUTPUT=$(./target/release/cspguardian check "${{ inputs.url }}" --json 2>/dev/null)
         RESULT=$(echo "$OUTPUT" | jq -r '.frame_policy.result')
         RISK=$(echo "$OUTPUT" | jq -r '.risk')
         echo "result=$RESULT" >> "$GITHUB_OUTPUT"
