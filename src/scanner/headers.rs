@@ -56,10 +56,16 @@ pub fn evaluate_embed(xfo: &Option<String>, frame_ancestors: &Option<String>) ->
         if fa.contains("'none'") {
             return EmbedResult::Blocked;
         }
-        if fa.contains("'self'") || fa.contains("*") || fa.len() > "frame-ancestors".len() + 2 {
-            return EmbedResult::Allowed;
+        // 'self' alone admits only the site's own origin, like X-Frame-Options SAMEORIGIN,
+        // so a signage player on another origin is blocked.
+        let self_only = fa
+            .split_whitespace()
+            .skip(1)
+            .all(|src| src.eq_ignore_ascii_case("'self'"));
+        if self_only {
+            return EmbedResult::Blocked;
         }
-        return EmbedResult::Blocked;
+        return EmbedResult::Allowed;
     }
 
     EmbedResult::Unknown
@@ -117,6 +123,25 @@ mod tests {
     fn evaluate_embed_allowed_by_frame_ancestors_wildcard() {
         assert!(matches!(
             evaluate_embed(&None, &Some("frame-ancestors *".to_string())),
+            EmbedResult::Allowed
+        ));
+    }
+
+    #[test]
+    fn evaluate_embed_blocked_by_frame_ancestors_self_only() {
+        assert!(matches!(
+            evaluate_embed(&None, &Some("frame-ancestors 'self'".to_string())),
+            EmbedResult::Blocked
+        ));
+    }
+
+    #[test]
+    fn evaluate_embed_allowed_by_frame_ancestors_self_plus_origin() {
+        assert!(matches!(
+            evaluate_embed(
+                &None,
+                &Some("frame-ancestors 'self' https://player.example".to_string())
+            ),
             EmbedResult::Allowed
         ));
     }
